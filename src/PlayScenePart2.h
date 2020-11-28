@@ -21,13 +21,13 @@ public:
 	virtual void clean() override;
 	virtual void handleEvents() override;
 	virtual void start() override;
-
-
+	void m_collisionCheck();
+	
 private:
-	//// IMGUI Function
-	//void GUI_Function() const;
+	// IMGUI Function
+	void GUI_Function() const;
 	std::string m_guiTitle;
-
+	
 	glm::vec2 m_mousePosition;
 
 	Target* m_pBall;
@@ -35,6 +35,7 @@ private:
 	Player* m_pPlayer;
 	bool m_playerFacingRight;
 
+	Label* m_pStartLabel{};
 	// UI Items
 	Button* m_pBackButton;
 	Button* m_pNextButton;

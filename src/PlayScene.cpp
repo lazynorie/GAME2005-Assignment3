@@ -30,8 +30,6 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
-
-
 	updateDisplayList();
 
 
@@ -44,14 +42,12 @@ void PlayScene::update()
 	{
 		Bullet* bullet = *myiter;
 		if (bullet->active && bullet->getTransform()->position.y >= 650)
-
 		{
 			m_pPool->Despawn(*myiter);
 
 			break;
 		}
-		if (m_pPlayer->isColliding(bullet))
-		{
+		else if (bullet->active && m_pPlayer->isColliding(bullet)) {
 			m_pPool->Despawn(*myiter);
 			SoundManager::Instance().playSound("explosion");
 			break;
@@ -67,6 +63,12 @@ void PlayScene::clean()
 void PlayScene::handleEvents()
 {
 	EventManager::Instance().update();
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_2))
+	{
+		TheGame::Instance()->changeSceneState(PLAY_SCENE_2);
+	}
+
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
 	{
@@ -95,14 +97,57 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
-
-	TextureManager::Instance()->load("../Assets/textures/Background.jpg", "background");
-	SoundManager::Instance().load("../Assets/audio/explosion.wav", "explosion", SOUND_SFX);
 	// Player Sprite
 
 	m_pPlayer = new Player();
 	addChild(m_pPlayer);
+	const SDL_Color blue = { 237, 244, 255, 255 };//light blue
+	m_pStartLabel = new Label("Scene for part 1", "Consolas", 40, blue, glm::vec2(500.0f, 200.0f));
+	m_pStartLabel->setParent(this);
+	addChild(m_pStartLabel);
 
+	TextureManager::Instance()->load("../Assets/textures/Background.jpg", "background");
+	SoundManager::Instance().load("../Assets/audio/explosion.wav", "explosion", SOUND_SFX);
+	// Back Button
+	m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
+	m_pBackButton->getTransform()->position = glm::vec2(100.0f, 550.0f);
+	m_pBackButton->addEventListener(CLICK, [&]()-> void
+	{
+		m_pBackButton->setActive(false);
+		TheGame::Instance()->changeSceneState(PLAY_SCENE_2);
+	});
+
+	m_pBackButton->addEventListener(MOUSE_OVER, [&]()->void
+	{
+		m_pBackButton->setAlpha(128);
+	});
+
+	m_pBackButton->addEventListener(MOUSE_OUT, [&]()->void
+	{
+		m_pBackButton->setAlpha(255);
+	});
+	addChild(m_pBackButton);
+
+	// Next Button
+	m_pNextButton = new Button("../Assets/textures/nextButton.png", "nextButton", NEXT_BUTTON);
+	m_pNextButton->getTransform()->position = glm::vec2(900.0f, 550.0f);
+	m_pNextButton->addEventListener(CLICK, [&]()-> void
+	{
+		m_pNextButton->setActive(false);
+		TheGame::Instance()->changeSceneState(END_SCENE);
+	});
+
+	m_pNextButton->addEventListener(MOUSE_OVER, [&]()->void
+	{
+		m_pNextButton->setAlpha(128);
+	});
+
+	m_pNextButton->addEventListener(MOUSE_OUT, [&]()->void
+	{
+		m_pNextButton->setAlpha(255);
+	});
+
+	addChild(m_pNextButton);
 
 
 	m_pPool = new BulletPool(10);
@@ -124,12 +169,6 @@ void PlayScene::SpawnBullet()
 	}
 	bulletSpawnTimerStart = SDL_GetTicks();
 }
-
-
-
-
-
-
 
 //PlayScene::PlayScene()
 //{

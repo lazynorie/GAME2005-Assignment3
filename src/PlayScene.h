@@ -36,6 +36,7 @@ private:
 	Plane* m_pPlaneSprite;
 	Player* m_pPlayer;
 	//Bullet* m_pBullet;
+	Label* m_pStartLabel{};
 
 
 	Button* m_pBackButton;
